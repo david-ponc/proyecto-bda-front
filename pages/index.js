@@ -1,65 +1,89 @@
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import Button from 'components/Button'
+import Card from 'components/Card'
+import { ListContainer, Header, ControlsContainer } from './styles'
+import { AnimateSharedLayout } from 'framer-motion'
+import { useCards } from 'hooks/useCards'
+import { amountFormater, cardNumberFormater } from 'utils/formats'
 
-export default function Home() {
+const container = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      delayChildren: 0.3,
+      staggerChildren: 0.125,
+      duration: 0.4
+    }
+  }
+}
+
+const item = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.6
+    }
+  }
+}
+
+export default function Home () {
+  const cards = useCards()
+  const router = useRouter()
+
+  // useEffect(() => {
+  //   console.log('cards: ', cards)
+  // }, [cards])
+
+  const handleCreateCard = () => {
+    router.push('/crear')
+  }
+
   return (
-    <div className={styles.container}>
+    <div>
       <Head>
-        <title>Create Next App</title>
+        <title>CRUD MongoDB</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Header>
+        <h1>Hola, bienvenido a tu gestor de tarjetas</h1>
+        <p>Crea, visualiza, edita y elimina tarjetas bancarias</p>
+      </Header>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+      <ControlsContainer style={{ display: 'flex' }}>
+        <Button onClick={handleCreateCard}>Crear tarjeta</Button>
+      </ControlsContainer>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+      <AnimateSharedLayout type="crossfade">
+        <ListContainer
+          initial="hidden"
+          variants={container}
+          animate="visible"
         >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
+          {
+            cards.map(card => {
+              return (
+                <Link href={`/${card.number}/detalles`} key={card.number}>
+                  <a>
+                    <Card
+                      owner={card.owner}
+                      brand={card.brand}
+                      numberCard={cardNumberFormater(card.number)}
+                      amount={amountFormater(card.amount)}
+                      expiration={card.expiration}
+                      variants={item}
+                    />
+                  </a>
+                </Link>
+              )
+            })
+          }
+        </ListContainer>
+      </AnimateSharedLayout>
     </div>
   )
 }
