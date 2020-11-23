@@ -7,6 +7,7 @@ import { ListContainer, Header, ControlsContainer } from 'styles/stylesIndex'
 import { AnimateSharedLayout } from 'framer-motion'
 import { useCards } from 'hooks/useCards'
 import { amountFormater, cardNumberFormater } from 'utils/formats'
+import { useEffect, useState } from 'react'
 
 const container = {
   hidden: { opacity: 0 },
@@ -32,12 +33,13 @@ const item = {
 }
 
 export default function Home () {
+  const [loading, setLoading] = useState(true)
   const cards = useCards()
   const router = useRouter()
 
-  // useEffect(() => {
-  //   console.log('cards: ', cards)
-  // }, [cards])
+  useEffect(() => {
+    cards.length && setLoading(false)
+  }, [cards])
 
   const handleCreateCard = () => {
     router.push('/crear')
@@ -57,14 +59,13 @@ export default function Home () {
       <ControlsContainer style={{ display: 'flex' }}>
         <Button onClick={handleCreateCard}>Crear tarjeta</Button>
       </ControlsContainer>
-
       <AnimateSharedLayout type="crossfade">
         <ListContainer
           initial="hidden"
           variants={container}
           animate="visible"
         >
-          {
+          { !loading &&
             cards.map(card => {
               return (
                 <Link href={`/${card.number}/detalles`} key={card.number}>
@@ -82,6 +83,12 @@ export default function Home () {
               )
             })
           }
+          {!loading && !cards.length && (
+            <>
+              <h3>Parece que aun no hay tarjetas creadas 😓</h3>
+              <p>Crea una nueva tarjeta</p>
+            </>
+          )}
         </ListContainer>
       </AnimateSharedLayout>
     </div>
