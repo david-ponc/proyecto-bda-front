@@ -84,6 +84,7 @@ export default function Home () {
             register={register(ownerScheme)}
             name="owner" />
           <Input
+            type="number"
             placeholder="Numero de tarjeta"
             register={register(numberScheme)}
             onChange={handleChangeNumber}
@@ -94,6 +95,7 @@ export default function Home () {
             onChange={handleChangeExpiration}
             name="expiration" />
           <Input
+            type="number"
             placeholder="Monto actual"
             register={register(amountScheme)}
             name="amount" />

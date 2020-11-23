@@ -19,4 +19,15 @@ export const Container = styled.input`
   &:focus {
     box-shadow: inset 0 0 0 2px var(--primary-color);
   }
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  &[type=number] {
+    -moz-appearance: textfield;
+  }
 `
